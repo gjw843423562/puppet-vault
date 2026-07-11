@@ -139,6 +139,19 @@ def _ensure_remote(cwd: Path, remote_url: str) -> Tuple[bool, str]:
     return True, "remote_ok"
 
 
+def _ensure_git_identity(cwd: Path) -> None:
+    """仅在本仓库设置提交者身份，不修改全局 git config。"""
+    code, name, _ = _run_git(["config", "user.name"], cwd)
+    if code != 0 or not name.strip():
+        _run_git(["config", "user.name", "gjw843423562"], cwd)
+    code, email, _ = _run_git(["config", "user.email"], cwd)
+    if code != 0 or not email.strip():
+        _run_git(
+            ["config", "user.email", "gjw843423562@users.noreply.github.com"],
+            cwd,
+        )
+
+
 def cmd_init(remote_url: str) -> int:
     root = _vault_root()
     if not root.is_dir():
@@ -148,6 +161,7 @@ def cmd_init(remote_url: str) -> int:
     if not ok:
         print(f"[ERROR] {msg}")
         return 1
+    _ensure_git_identity(root)
     ok, remote_msg = _ensure_remote(root, remote_url)
     if not ok:
         print(f"[ERROR] {remote_msg}")
