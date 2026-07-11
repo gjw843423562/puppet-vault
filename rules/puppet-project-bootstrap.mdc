@@ -1,0 +1,68 @@
+---
+description: "【须 read_file 全文】Puppet 项目环境首会话引导。触发：新会话首轮且项目无 doc/puppet-project-profile.md、或用户要求确认/变更项目开发平台时。须读全文获取设备 profile.marker、反问优先与开工门禁。"
+alwaysApply: false
+---
+
+# Puppet 项目环境引导（首会话 / 无档案）
+
+## 两层标识
+
+| 层级 | 文件 | 本机策略 |
+|------|------|----------|
+| 设备 / 协作环境 | `{{CURSOR_HOME}}/plugins/local/puppet-vault/profile.marker` | 默认 **company**，**禁止反复询问**公司/个人 |
+| 项目 / 开发平台 | `<项目>/doc/puppet-project-profile.md` | 无档案则**先问清再开工**；有档案则只读档案 |
+
+## 新会话启动顺序（强制）
+
+1. **读** `profile.marker`（静默；`ask_collaboration_context` 为 false 时不得再问协作环境）。
+2. **找** `<项目>/doc/puppet-project-profile.md`。
+3. **若存在**：`read_file` 全文 → 告知「已同步项目环境」→ 按档案路由子规则 → 同步登记簿（见总入口）→ 开始工作。
+4. **若不存在**：
+   - **停止**实质性开发（不写代码、不改 Prefab、不跑破坏性命令；只读排查除外）。
+   - 用 **AskQuestion** 一次性确认「开发平台」（见下表）。
+   - 用户确认后 **写入** `doc/puppet-project-profile.md`（模板见本文末尾）。
+   - 再按平台路由子规则，然后才开始开发。
+
+## 禁止行为
+
+- **禁止**为识别平台而扫描 `LunaTemp/`、`ProjectSettings`、项目名等（无档案时**直接问**更快）。
+- **禁止**在已有 `puppet-project-profile.md` 时重复询问开发平台。
+- **禁止**在 `profile.marker` 已标明 `company` 且 `ask_collaboration_context: false` 时询问公司/个人。
+
+## 用户否定档案时
+
+用户明确说「项目环境变了 / 不是 Luna 了」→ 更新 `puppet-project-profile.md`，必要时再 AskQuestion 一次。
+
+## 开发平台 → 子规则路由
+
+| 档案中的平台 | 须读子规则 |
+|--------------|------------|
+| Unity | `puppet-unity-dev-constraints.mdc` |
+| Unity (Luna) | `puppet-unity-dev-constraints.mdc` + `puppet-unity-luna-compat.mdc` |
+| Cocos Creator | `puppet-cocos-dev-constraints.mdc` |
+
+## AskQuestion 选项（无档案时，仅 1 次）
+
+**开发平台（必选）**
+
+- Unity（普通）
+- Unity（Luna 试玩）
+- Cocos Creator
+
+## `doc/puppet-project-profile.md` 写入模板
+
+```markdown
+# Puppet 项目档案
+
+| 字段 | 值 |
+|------|-----|
+| 开发平台 | （用户所选） |
+| 协作环境 | company（继承设备 profile.marker） |
+| 登记簿 | （路径或「待建」） |
+| 主链/备注 | （可选） |
+| 确认日期 | YYYY-MM-DD |
+
+## Luna 兼容备忘（Luna 项目按需追加）
+```
+
+写入后同项目后续会话**只读此文件**，不得重复问询平台。

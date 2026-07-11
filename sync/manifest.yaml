@@ -1,0 +1,31 @@
+version: 1
+description: puppet-vault 个人规则库同步清单
+
+remote:
+  url: https://github.com/gjw843423562/puppet-vault.git
+  default_branch: main
+
+sync:
+  include:
+    - rules/**
+    - skills/**
+    - references/**
+    - sync/**
+    - scripts/**
+    - hooks/**
+    - .cursor-plugin/plugin.json
+    - profile.marker
+    - README.md
+    - EVOLUTION_LOG.md
+  exclude:
+    - memory/**
+    - "**/*.tmp"
+    - "**/pipeline.json"
+    - .git/**
+    - .gitignore
+
+policy:
+  daily_pull: true
+  auto_commit: true
+  auto_push: true
+  pull_timezone: Asia/Shanghai

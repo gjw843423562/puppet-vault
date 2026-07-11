@@ -1,0 +1,18 @@
+{
+  "context": "company",
+  "org": "sc",
+  "ask_collaboration_context": false,
+  "skill_policy": {
+    "git_commit": "sc-git-commit",
+    "luna_audit": "sc-luna-audit",
+    "trial_orchestrator": "xyx-trial-refactor-orchestrator",
+    "vault_sync": "puppet-vault-sync"
+  },
+  "sync_policy": {
+    "remote": "https://github.com/gjw843423562/puppet-vault.git",
+    "default_branch": "main",
+    "daily_pull": true,
+    "auto_commit": true,
+    "auto_push": true
+  }
+}

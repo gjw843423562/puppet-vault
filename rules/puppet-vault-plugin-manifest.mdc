@@ -1,0 +1,36 @@
+---
+description: 【须 read_file 全文】将执行 `puppet-vault-skill` 时：先读本规则，再读本插件运行态 `plugin.json`，只取 `name`、`version` 并在首轮回复最前输出。
+alwaysApply: true
+---
+
+# puppet-vault：插件名与版本（仅此）
+
+## 何时生效
+
+已判定将执行 **`puppet-vault-skill`**（Puppet 个人规则与技能库、用于存放个人私有规则、协作 SOP 及自定义技能的本地库，实现与公司插件物理隔离。、显式 `puppet-vault-skill` 等）时。
+
+## 做什么（仅两项）
+
+1. **`read_file` 本规则全文**，避免只靠 `description`。
+2. **`read_file` 本插件运行态清单**：只读下面这一处 `plugin.json`，从中取 **`name`**、**`version`**。
+   - 路径（运行态唯一来源）：`{{CURSOR_HOME}}/plugins/local/puppet-vault/.cursor-plugin/plugin.json`
+
+不要求读取其它文件，不要求使用 `publish_dir`、工作区仓库路径或其它备用路径。
+
+## 首轮输出（在 pipeline / 后续步骤之前）
+
+成功读到 `plugin.json` 后，在**本轮对用户可见回复最前**输出：
+
+```text
+[puppet-vault] 插件名：<name> | 版本：<version>
+```
+
+## 读失败
+
+说明已尝试的路径与原因，**不得编造** `name` / `version`。
+
+## 禁止
+
+- 未用读文件工具成功读到上述 `plugin.json` 就写出具体版本号。
+- 用终端 `cat`/`type` 代替读文件工具（除非读文件工具不可用且须在回复中说明）。
+- 用仓库 `publish_dir/...` 或任意非上述运行态路径充当数据来源。

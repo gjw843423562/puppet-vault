@@ -1,0 +1,114 @@
+---
+description: "【须 read_file 全文】Puppet Unity/C# 开发约束。触发：检测到 Unity 项目、修改/新增 C# 脚本或 Prefab/Scene、SerializedField/Inspector 参数、Unity Bug 修复与编译验收时。须读全文获取预制体/场景优先、参数中文化、编译自检与局部修改合规要求。"
+alwaysApply: false
+---
+
+# Puppet Unity 开发约束
+
+## 最高规范加载（强制）
+
+当检测到当前项目为 **Unity/C#** 项目时，在执行任何代码编写、修改或审查前，必须先 `read_file` 读取：
+
+`{{CURSOR_HOME}}/plugins/local/puppet-vault/references/unity_rules.md`
+
+将其作为 Unity 行为与代码开发的最高规范并严格执行。若文件不存在或为空，仍须遵守本节全部硬约束。
+
+## 参数中文化（Serialized Fields）
+
+修改或新增脚本时，所有对外暴露的 Inspector 参数必须实现中文显示或说明：
+
+- **首选（推荐）**：自定义 `[TLabel("中文名称")]` 属性（无额外间距，视觉效果最佳）
+- **备选**：Unity 原生 `[Header("中文名称")]` 或 `[Tooltip("中文说明")]`
+- **严禁**：第三方插件属性（如 Odin `[LabelText]`、`[ShowInInspector]` 等），除非明确为个人项目且已安装 Odin。
+- **目的**：保障高兼容性与代码纯净性，同时提供最佳的 Inspector 观看体验。
+
+```csharp
+// ✅ 正确（推荐）
+[TLabel("移动速度")]
+public float maxSpeed = 10f;
+
+// ✅ 正确（备选）
+[Header("移动速度")]
+public float maxSpeed = 10f;
+```
+
+## 修改自检（编译验收）
+
+脚本或相关配置修改完成后，交付前必须执行编译检查：
+
+1. 优先：唤醒 Unity 编译或项目既有编译验收流程（如 `xyx-unity-wake-compiler`）；
+2. 备选：对改动文件执行 `ReadLints` 并确认无新增错误；
+3. **确认无编译/静态分析报错后方可交付**。
+
+## 局部修改强制合规
+
+对 Unity 项目进行 Bug 修复、功能修改、逻辑调整时：
+
+- 即使**未**执行项目整体重构，所有新增/修改代码、预制体与配置也必须无条件遵守 `unity_rules.md` 与本文件约束；
+- **严禁**以「仅局部简单修补 / 非全量重构」为由编写不规范代码。
+
+## 预制体/场景优先（禁止脚本叠补丁）
+
+修复 Unity Bug 或 UI/表现问题时，**必须先判断能否在 Prefab 或 Scene 一次性解决**；能则必须在资源侧改，禁止用脚本运行时补丁替代。
+
+### 优先在 Prefab / Scene 处理的典型项
+
+- 禁用或删除**冗余/误复制**的子节点（如从结算页复制来的 SDK 货币栏 `$LayoutCoinAndDiamond`）
+- 修正 Inspector **序列化引用**、Button **OnClick** 绑定、Canvas 层级与 **Raycast** 遮挡
+- 调整节点 **Active** 默认状态、Layout/Anchor、Mask 与 Sorting
+
+### 脚本仅承担 Prefab 无法表达的业务逻辑
+
+- 计奖、存档、流程跳转、网络/SDK 回调等
+- 与 `MyLayerSettleWin` 等 Layer 脚本同级的**领取/关闭**流程
+
+### 禁止的「脚本叠补丁」反模式
+
+- 在 `OnShow`/`Awake` 里 `Find` 隐藏本应在 Prefab 中默认禁用的节点
+- 新增**全局标志位**去分支修改其他模块（如 `WorldCanvas`、`GameManager`）的行为
+- 为同一根因同时改 Prefab **和**跨文件脚本拦截——应只保留 Prefab 修复 + 必要业务脚本
+
+### 决策流程（强制）
+
+```
+能否在 Prefab/Scene 修掉根因？
+  ├─ 能 → 只改 Prefab/Scene（必要时走 xyx-file-asset-ops 保 .meta）
+  └─ 不能 → 只改对应 Layer/Manager 脚本，且不波及其他模块
+```
+
+### 参考案例
+
+离线奖励窗飞币狂弹：根因为 `LayerOfflineReward.prefab` 残留 `$LayoutCoinAndDiamond` 注册 SDK 飞币目标。**正确**做法为预制体侧禁用该节点；**错误**做法为 `OnShow` 运行时隐藏 + `GameModel` 全局标志拦截 `AddGold` 特效。
+
+## WebGL / Luna 运行时调试日志（强制）
+
+试玩、WebGL、Luna 等 Web 运行时**不支持** `System.IO` 文件流（`File.AppendAllText`、`StreamWriter` 等会触发 `Not implemented` 或静默失败）。
+
+### 必须
+
+1. **仅用 `Debug.Log` / `Debug.LogWarning`** 输出调试埋点；禁止在 Web 目标路径依赖落盘日志。
+2. **统一前缀**：`[DBG<sessionId>]`（如 `[DBG29d17f]`），便于 Console / Luna 日志过滤。
+3. **结构化载荷**：单行 NDJSON 或等价 JSON 字符串附在前缀后，便于导出后解析（含 `hypothesisId`、`message`、`data`、`timestamp`）。
+4. **Editor 与 Web 同路径**：不因 Editor 可写文件而在 Web 埋点中混用 `File.*`；若需 Editor 落盘，须 `#if !UNITY_WEBGL && !UNITY_LUNA` 隔离，且 Web 路径仍只走 `Debug.Log`。
+
+### 禁止
+
+- Web/Luna 脚本中调用 `System.IO.File`、`Directory`、`Path` 写调试日志。
+- 无前缀的口语化 `Debug.Log("刹车了")` 作为可复盘诊断依据（无法批量检索）。
+
+### 示例
+
+```csharp
+// ✅ Web / Luna / Editor 通用
+string line = $"{{\"sessionId\":\"29d17f\",\"message\":\"brake_release\",\"data\":{dataJson},\"timestamp\":{ts}}}";
+Debug.Log($"[DBG29d17f] {line}");
+
+// ❌ Web 会报错或无效
+File.AppendAllText(path, line);
+```
+
+复盘时：Unity Editor Console 或 Luna 构建日志中搜索 `[DBG29d17f]`，复制 NDJSON 行做分析。
+
+## 与登记闭环联动
+
+Unity 相关 Bug 修复或功能修改落地后，须联动 `puppet-modification-ledger.mdc` 完成用户确认与登记。

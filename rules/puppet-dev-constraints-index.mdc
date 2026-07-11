@@ -1,0 +1,57 @@
+---
+description: "【须 read_file 全文】Puppet 个人开发约束总入口。触发：新会话首轮、Unity/Cocos/Luna 项目开发、Bug 修复/功能修改/脚本新增时。须读全文获取 profile.marker、项目环境档案、登记簿同步与约束路由。"
+alwaysApply: true
+---
+
+# Puppet 个人开发约束（总入口）
+
+> 本文件为 `constraints.md` 优化迁入 puppet-vault 的总路由。正文约束已拆分到同目录子规则；触发对应场景时须 `read_file` 读取子规则全文后再执行。
+
+## 约束路由表
+
+| 场景 | 子规则文件 |
+|------|-----------|
+| 新会话首轮 / 设备与项目环境 | 本节「设备标识 + 项目环境」+ `puppet-project-bootstrap.mdc` |
+| 新会话首轮 / 登记簿同步 | 本节「会话登记簿同步」+ `puppet-modification-ledger.mdc` |
+| Bug 修复 / 功能修改 / 逻辑调整后的登记闭环 | `puppet-modification-ledger.mdc` |
+| Unity 脚本 / Prefab / Scene 新增或修改 | `puppet-unity-dev-constraints.mdc`（含预制体/场景优先） |
+| Unity (Luna) 试玩 / Luna 打包报错 / 转译 API | `puppet-unity-luna-compat.mdc`（叠加 Unity 子规则） |
+| Cocos Creator 脚本新增或修改 | `puppet-cocos-dev-constraints.mdc` |
+| 重构 / 架构调整 / 大模块拆分 | `puppet-refactor-gate.mdc` |
+
+子规则路径（运行态）：`{{CURSOR_HOME}}/plugins/local/puppet-vault/rules/<文件名>.mdc`
+
+## 设备标识 + 项目环境（新会话首轮，优先于登记簿）
+
+### 设备层（不反复问）
+
+1. **读** `{{CURSOR_HOME}}/plugins/local/puppet-vault/profile.marker`。
+2. `context` 默认为协作环境（如 `company`）；`ask_collaboration_context: false` 时**禁止**再问公司/个人。
+3. 按 `skill_policy` 路由公司级技能（如 `sc-git-commit`、`sc-luna-audit`）。
+
+### 项目层（反问优先，有档案则只读）
+
+1. **找** `<项目>/doc/puppet-project-profile.md`。
+2. **若存在**：`read_file` 全文 → 告知「长官，我已同步项目环境档案」→ 按平台读对应子规则（Luna 须叠加 `puppet-unity-luna-compat.mdc`）。
+3. **若不存在**：须 `read_file` `puppet-project-bootstrap.mdc` 全文 → AskQuestion 确认开发平台 → 写入档案 → **再开始开发**。
+4. **禁止**为识别平台扫描 `LunaTemp/`、`ProjectSettings` 等；无档案时直接问询。
+
+## 会话登记簿同步（新会话首轮强制）
+
+在**每次新会话首轮**或用户打开 Cursor 后的第一条实质性回复前，AI 必须物理检索当前项目工作区：
+
+1. **检索范围**（按优先级）：`doc/`、`docs/`、项目根目录。
+2. **检索目标**：名称或用途类似《问题解决与修改记录登记簿》的 `.md` 文件（不必强求固定文件名）。
+3. **若找到**：
+   - 必须 `read_file` 读取全文，同步历史修改背景；
+   - 主动告知用户：「长官，我已读取并同步了项目此前的修改记录登记簿，已完全掌握历史背景。」
+4. **若未找到**：
+   - 必须在首轮回复中主动提问：「长官，检测到当前项目下尚未建立或关联问题解决记录登记簿。请问本项目此前是否已有记录文件，或者是否需要我们在 `doc/` 目录下新建一个极简登记簿以便后续开发对账留痕？」
+   - 严禁静默忽略。
+
+## 通用底线
+
+1. **局部修改亦须合规**：即使只做 Bug 修复或局部补丁，新增/修改的代码、预制体与配置也必须严格遵守 Unity/Cocos 子规则；禁止以「非全量重构」为由编写不规范代码。
+2. **Unity 预制体/场景优先**：UI/表现类 Bug 先查 Prefab/Scene 能否修根因，禁止脚本叠补丁（细则见 `puppet-unity-dev-constraints.mdc`）。
+3. **修改后自检**：脚本或配置落地后须执行编译/静态检查，确认无报错再交付（细则见 Unity/Cocos 子规则）。
+4. **登记闭环**：解决方案物理落地后，须按 `puppet-modification-ledger.mdc` 完成用户确认与登记，未确认前禁止写入登记簿。

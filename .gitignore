@@ -1,0 +1,15 @@
+# 本地运行态与敏感数据（不同步到 GitHub）
+memory/
+*.tmp
+*.log
+.DS_Store
+Thumbs.db
+
+# 管线黑盒配置
+**/pipeline.json
+
+# Git 提交临时文件
+.cursor_commit_msg.txt
+
+# 本地同步状态（存放在 local_data，此处兜底）
+sync_state.json

@@ -1,0 +1,14 @@
+{
+  "name": "puppet-vault",
+  "version": "0.2.2",
+  "description": "用于存放个人私有规则、协作 SOP 及自定义技能的本地库，实现与公司插件物理隔离。",
+  "author": {
+    "name": "sc xyx"
+  },
+  "keywords": [
+    "sop",
+    "pipeline",
+    "factory",
+    "puppet-vault"
+  ]
+}

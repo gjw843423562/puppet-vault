@@ -1,0 +1,16 @@
+﻿{
+  "name": "puppet-vault",
+  "version": "0.1.0",
+  "description": "AI 自进化本地私有插件：存放自动生成的 Rule/Skill/Memory，不受同步工具覆盖。",
+  "author": {
+    "name": "local-auto-generated"
+  },
+  "keywords": [
+    "evolution",
+    "self-improving",
+    "local",
+    "rules",
+    "skills",
+    "memory"
+  ]
+}

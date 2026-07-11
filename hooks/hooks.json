@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "command": "python3 \"C:\\Users\\Administrator\\.cursor/hooks/scripts/hook_wrapper.py\" --event sessionStart --target \"C:\\Users\\Administrator\\.cursor/plugins/local/puppet-vault/scripts/puppet_session_start_sync.py\" --target-arg sessionStart",
+        "timeout": 15
+      }
+    ],
+    "sessionEnd": [
+      {
+        "command": "python3 \"C:\\Users\\Administrator\\.cursor/hooks/scripts/hook_wrapper.py\" --event sessionEnd --target \"C:\\Users\\Administrator\\.cursor/plugins/local/puppet-vault/scripts/puppet_session_end_sync.py\" --target-arg sessionEnd",
+        "timeout": 30
+      }
+    ]
+  }
+}

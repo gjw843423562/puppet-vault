@@ -1,0 +1,103 @@
+---
+description: "【须 read_file 全文】Unity Luna 试玩打包 API 兼容红线。触发：项目档案为 Unity(Luna)、Luna 打包/转译报错、编写 FindObjectsOfType/反射/类名字符串判定时。须读全文获取 Luna 禁用 API 与标准替代写法。"
+alwaysApply: false
+---
+
+# Puppet Unity (Luna) 打包兼容红线
+
+> 预防性规则：写代码阶段遵守；打包后检测仍走 `sc-luna-audit` / `sc-trial-luna`。
+> 运行时类名混淆另见全局 `webgl-obfuscation-safety.mdc`。
+
+## 1. 强制自检（改 C# 后）
+
+交付前对**本次改动文件**检索：
+
+- `FindObjectsOfType\s*<[^>]+>\s*\(\s*true\s*\)` → **禁止**
+- `FindObjectOfType\s*<[^>]+>\s*\(\s*true\s*\)` → **禁止**
+- `GetType\(\)\.Name` / `typeof(...).Name` 用于业务判定 → **禁止**（改用 `GetComponent<T>()` / 接口）
+- `TerrainCollider` / `UnityEngine.Terrain` / `TerrainData` → **须提前告知用户**（§6）；试玩默认无 Terrain 模块
+- `TilemapCollider2D` / `UnityEngine.Tilemaps` → **须提前告知用户**（§6）；试玩默认无 Tilemaps 模块
+
+## 2. Luna 常见打包异常
+
+| 错误 / 现象 | 根因 | 标准替代 |
+|-------------|------|----------|
+| **CS1501** `FindObjectsOfType` 1 个参数 | Luna 转译 API 子集无 `includeInactive` 重载 | §3 无参版或 §3 Helper |
+| **CS0246 / CS1069** `TerrainCollider` / `Terrain` | Luna 桩与试玩工程均未引用 `UnityEngine.TerrainModule` | §6 替换方案；第三方插件用 `#if false` 或 `!UNITY_LUNA` 隔离 |
+| **CS1069** `TilemapCollider2D` / `UnityEngine.Tilemaps` | 试玩未引用 Tilemaps 模块；Editor 下 `!UNITY_LUNA` 仍会编译 | §6；`TailCollisionHelper` 已 `#if false` |
+| **CS0246** 混淆后找不到类型 | 字符串类名失效 | 类型安全查找 / 序列化引用 |
+| 打包通过但运行时找不到组件 | 类名混淆 | `GetComponent<T>()`，禁 `GetType().Name` |
+
+## 3. FindObjectsOfType 标准写法
+
+### 3.1 仅需激活对象（Luna 已验首选）
+
+```csharp
+var items = Object.FindObjectsOfType<RaceSkull>();
+```
+
+> 本仓库已验：去掉 `(true)` 即可通过 Luna 打包；无需 Helper 除非必须扫描 inactive 对象。
+
+### 3.2 需含 inactive（Luna Helper，按需）
+
+```csharp
+static T[] FindSceneObjectsIncludingInactive<T>() where T : Object {
+    var list = new System.Collections.Generic.List<T>();
+    var all = Resources.FindObjectsOfTypeAll<T>();
+    for (int i = 0; i < all.Length; i++) {
+        T item = all[i];
+        if (item == null) continue;
+        var go = item is GameObject g ? g : (item as Component)?.gameObject;
+        if (go == null || !go.scene.IsValid()) continue;
+        list.Add(item);
+    }
+    return list.ToArray();
+}
+```
+
+优先抽到项目内公共工具类（如 `RaceSceneObjectQuery.cs`），避免多文件复制。
+
+### 3.3 禁止写法
+
+```csharp
+// ❌ Luna 打包 CS1501
+FindObjectsOfType<RaceSkull>(true);
+FindObjectsOfType(typeof(RaceSkull), true);
+```
+
+## 4. Terrain 红线（须提前告知用户）
+
+Luna 试玩与多数裁剪工程**不包含** `UnityEngine.TerrainModule`。一旦扫描或改动涉及下列 API，**必须先向用户说明**并确认替换方案，禁止静默保留：
+
+- `Terrain`、`TerrainCollider`、`TerrainData`
+- `TilemapCollider2D`、`Tilemap`、`UnityEngine.Tilemaps`
+- `NavMeshBuildSourceShape.Terrain` 等地形烘焙路径
+- 第三方插件内嵌的 Terrain 碰撞分支（如 FImpossible Tail Animator）
+
+**标准替代**（按场景选型，实施前与用户确认）：
+
+| 原用途 | 替代 |
+|--------|------|
+| 地面碰撞 | 场景 MeshCollider / BoxCollider 烘焙网格 |
+| 高度采样 `SampleHeight` | 射线 `Physics.Raycast` 或预烘焙高度图 |
+| 地形材质/刷层 | 静态 Mesh + 常规材质（试玩通常直接删 Terrain 对象） |
+
+**已验隔离写法**（本仓库 FImpossible 三处）：
+
+```csharp
+#if false // [Luna/试玩] UnityEngine.TerrainModule 未引用
+// TerrainCollider / Terrain 相关代码
+#endif
+```
+
+## 5. 与 sc-trial-luna 分工
+
+| 组件 | 职责 |
+|------|------|
+| 本规则 | 编码阶段 API 红线（预防） |
+| `sc-luna-audit` | 打包后审计、报告、修复授权 |
+| `webgl-obfuscation-safety` | WebGL/Luna 类名混淆防御 |
+
+## 6. 项目档案联动
+
+项目 `doc/puppet-project-profile.md` 的「Luna 兼容备忘」节追加本项目已踩坑条目；**禁止**重复写入全局 puppet-vault 正文。
