@@ -13,6 +13,7 @@ sync:
     - sync/**
     - scripts/**
     - hooks/**
+    - adapters/**
     - .cursor-plugin/plugin.json
     - profile.marker
     - README.md
@@ -20,6 +21,8 @@ sync:
   exclude:
     - memory/**
     - "**/*.tmp"
+    - "**/*.pyc"
+    - "**/__pycache__/**"
     - "**/pipeline.json"
     - .git/**
     - .gitignore

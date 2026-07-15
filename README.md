@@ -6,6 +6,7 @@
 - **三步走协作模式**：针对复杂任务强制执行“诊断-竞优-迭代”流程。
 - **私有规则库**：存放仅在本地生效的个人工程习惯规则。
 - **自定义技能**：方便后续将重复性操作固化为本地 Skill。
+- **自管理分发**：不依赖 CCSwitch 或其它 Skill 管理器；Cursor/Codex 仅保留入口，规则和技能正文统一以本仓库为正本。
 
 ## 依赖
 - 需要同时安装 `sc-pipeline`
@@ -19,6 +20,16 @@
 - `scripts/`：存放技能配套的脚本。
 - `sync/`：Git 同步清单（manifest.yaml）。
 - `hooks/`：日级拉取与会话结束自动提交 Hook。
+- `adapters/`：Cursor/Codex 平台入口模板，不保存第二份规则或技能正文。
+
+## 自管理运行入口
+
+- 唯一正本：`<vault_root>`，当前机器为 `D:\puppet-vault`。
+- Cursor 入口：`{{CURSOR_HOME}}/plugins/local/puppet-vault/` 下的核心子目录链接到 `<vault_root>`。
+- Codex 入口：`{{AGENTS_HOME}}/skills/puppet-*` 或 `%USERPROFILE%\.codex\skills\puppet-*` 链接到 `<vault_root>/skills/`。
+- 修复/重建入口：运行 `scripts/install_agent_entries.cmd --agents cursor,codex`。
+- 详细说明：`sync/self-managed-runtime.md`。
+- Codex 规则桥接模板：`adapters/codex/AGENTS.md`。
 
 ## GitHub 同步
 

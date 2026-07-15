@@ -1,6 +1,6 @@
 # Project Rules for Cocos Creator & TypeScript (Global constraints)
 
-> Puppet 规范库。路径：`{{CURSOR_HOME}}/plugins/local/puppet-vault/references/cocos_rules.md`
+> Puppet 规范库。路径：`<vault_root>/references/cocos_rules.md`
 > 与 `rules/puppet-cocos-dev-constraints.mdc` 联动；后者为硬约束入口（编译自检、登记闭环）。
 
 当在电脑上使用 Cursor 协作 Cocos Creator/TS 项目时，必须严格加载并遵守此规则。

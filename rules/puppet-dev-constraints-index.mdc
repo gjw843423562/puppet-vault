@@ -19,13 +19,13 @@ alwaysApply: true
 | Cocos Creator 脚本新增或修改 | `puppet-cocos-dev-constraints.mdc` |
 | 重构 / 架构调整 / 大模块拆分 | `puppet-refactor-gate.mdc` |
 
-子规则路径（运行态）：`{{CURSOR_HOME}}/plugins/local/puppet-vault/rules/<文件名>.mdc`
+子规则路径（运行态）：`<vault_root>/rules/<文件名>.mdc`。`<vault_root>` 表示 puppet-vault 唯一正本目录，例如当前机器为 `D:\puppet-vault`；Cursor/Codex 入口只负责链接到该正本。
 
 ## 设备标识 + 项目环境（新会话首轮，优先于登记簿）
 
 ### 设备层（不反复问）
 
-1. **读** `{{CURSOR_HOME}}/plugins/local/puppet-vault/profile.marker`。
+1. **读** `<vault_root>/profile.marker`。
 2. `context` 默认为协作环境（如 `company`）；`ask_collaboration_context: false` 时**禁止**再问公司/个人。
 3. 按 `skill_policy` 路由公司级技能（如 `sc-git-commit`、`sc-luna-audit`）。
 

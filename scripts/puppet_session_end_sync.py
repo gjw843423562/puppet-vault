@@ -12,27 +12,15 @@ os.environ["PYTHONIOENCODING"] = "utf-8"
 os.environ["PYTHONUTF8"] = "1"
 
 
-def _cursor_home() -> Path:
-    env = os.environ.get("CURSOR_HOME")
+def _vault_root() -> Path:
+    env = os.environ.get("PUPPET_VAULT_ROOT")
     if env:
-        p = Path(env)
-        if p.name.lower() != ".cursor":
-            p = p / ".cursor"
-        return p.resolve()
-    return (Path(os.environ.get("USERPROFILE", Path.home())) / ".cursor").resolve()
+        return Path(env).resolve()
+    return Path(__file__).resolve().parents[1]
 
 
 def _sync_script() -> Path:
-    return (
-        _cursor_home()
-        / "plugins"
-        / "local"
-        / "puppet-vault"
-        / "skills"
-        / "puppet-vault-sync"
-        / "scripts"
-        / "puppet_sync.py"
-    )
+    return _vault_root() / "skills" / "puppet-vault-sync" / "scripts" / "puppet_sync.py"
 
 
 def main() -> int:

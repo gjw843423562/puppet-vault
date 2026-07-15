@@ -1,6 +1,6 @@
 # Project Rules for Unity & C# (Global constraints)
 
-> Puppet 规范库。路径：`{{CURSOR_HOME}}/plugins/local/puppet-vault/references/unity_rules.md`
+> Puppet 规范库。路径：`<vault_root>/references/unity_rules.md`
 > 与 `rules/puppet-unity-dev-constraints.mdc` 联动；后者为硬约束入口（参数中文化、编译自检、登记闭环）。
 
 当在电脑上使用 Cursor 协作 Unity/C# 项目时，必须严格加载并遵守此规则。
@@ -75,7 +75,7 @@
 ## 🔧 Puppet 扩展：Inspector 与序列化
 
 - 对外暴露的 Inspector 参数必须中文化。
-- **推荐方案**：使用自定义 `[TLabel("中文名称")]` 属性。该方案无额外间距，视觉效果极佳，且不依赖第三方插件。源码参考：`{{CURSOR_HOME}}/plugins/local/puppet-vault/references/tlabel_scripts.md`。
+- **推荐方案**：使用自定义 `[TLabel("中文名称")]` 属性。该方案无额外间距，视觉效果极佳，且不依赖第三方插件。源码参考：`<vault_root>/references/tlabel_scripts.md`。
 - **备选方案**：使用 Unity 原生 `[Header("中文名称")]` / `[Tooltip("中文说明")]`。
 - **个人项目例外**：若是个人项目且已安装 Odin，可优先考虑 Odin 的序列化插件（如 `[LabelText]`）。
 - **严禁**：在未获授权的公司项目中擅自引入第三方序列化插件。

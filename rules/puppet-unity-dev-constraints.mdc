@@ -9,7 +9,7 @@ alwaysApply: false
 
 当检测到当前项目为 **Unity/C#** 项目时，在执行任何代码编写、修改或审查前，必须先 `read_file` 读取：
 
-`{{CURSOR_HOME}}/plugins/local/puppet-vault/references/unity_rules.md`
+`<vault_root>/references/unity_rules.md`
 
 将其作为 Unity 行为与代码开发的最高规范并严格执行。若文件不存在或为空，仍须遵守本节全部硬约束。
 

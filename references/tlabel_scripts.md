@@ -1,6 +1,6 @@
 # TLabel 自定义标签脚本 (Puppet 规范组件)
 
-> 路径：`{{CURSOR_HOME}}/plugins/local/puppet-vault/references/tlabel_scripts.md`
+> 路径：`<vault_root>/references/tlabel_scripts.md`
 > 用于在 Unity Inspector 中显示中文名称，且不产生原生 `[Header]` 的额外间距。
 
 ## 1. TLabelAttribute.cs

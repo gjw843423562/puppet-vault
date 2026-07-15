@@ -9,7 +9,7 @@ alwaysApply: false
 
 | 层级 | 文件 | 本机策略 |
 |------|------|----------|
-| 设备 / 协作环境 | `{{CURSOR_HOME}}/plugins/local/puppet-vault/profile.marker` | 默认 **company**，**禁止反复询问**公司/个人 |
+| 设备 / 协作环境 | `<vault_root>/profile.marker` | 默认 **company**，**禁止反复询问**公司/个人 |
 | 项目 / 开发平台 | `<项目>/doc/puppet-project-profile.md` | 无档案则**先问清再开工**；有档案则只读档案 |
 
 ## 新会话启动顺序（强制）

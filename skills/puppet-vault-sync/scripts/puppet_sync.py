@@ -46,20 +46,37 @@ def _cursor_home() -> Path:
 
 
 def _vault_root() -> Path:
+    env = os.environ.get("PUPPET_VAULT_ROOT")
+    if env:
+        return Path(env).resolve()
+    try:
+        return Path(__file__).resolve().parents[3]
+    except IndexError:
+        pass
     return _cursor_home() / "plugins" / "local" / "puppet-vault"
 
 
+def _agent_data_home() -> Path:
+    env = os.environ.get("PUPPET_VAULT_STATE_HOME")
+    if env:
+        return Path(env).resolve()
+    agents_home = os.environ.get("AGENTS_HOME")
+    if agents_home:
+        return Path(agents_home).resolve() / "local_data" / "puppet-vault"
+    return _cursor_home() / "local_data" / "puppet-vault"
+
+
 def _sync_state_path() -> Path:
-    return _cursor_home() / "local_data" / "puppet-vault" / "sync_state.json"
+    return _agent_data_home() / "sync_state.json"
 
 
 def _sync_log_path() -> Path:
-    return _cursor_home() / "logs" / "puppet_vault_sync.jsonl"
+    return _agent_data_home() / "logs" / "puppet_vault_sync.jsonl"
 
 
 def _run_git(args: List[str], cwd: Path) -> Tuple[int, str, str]:
     proc = subprocess.run(
-        ["git", *args],
+        ["git", "-c", f"safe.directory={cwd.as_posix()}", *args],
         cwd=str(cwd),
         capture_output=True,
         text=True,

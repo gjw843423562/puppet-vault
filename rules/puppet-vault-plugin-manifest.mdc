@@ -13,9 +13,9 @@ alwaysApply: true
 
 1. **`read_file` 本规则全文**，避免只靠 `description`。
 2. **`read_file` 本插件运行态清单**：只读下面这一处 `plugin.json`，从中取 **`name`**、**`version`**。
-   - 路径（运行态唯一来源）：`{{CURSOR_HOME}}/plugins/local/puppet-vault/.cursor-plugin/plugin.json`
+   - 路径（运行态唯一来源）：`<vault_root>/.cursor-plugin/plugin.json`
 
-不要求读取其它文件，不要求使用 `publish_dir`、工作区仓库路径或其它备用路径。
+不要求读取其它文件，不要求使用 `publish_dir`、工作区仓库路径或其它备用路径。`<vault_root>` 表示 puppet-vault 唯一正本目录。
 
 ## 首轮输出（在 pipeline / 后续步骤之前）
 

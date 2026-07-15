@@ -7,7 +7,7 @@ description: "puppet-vault 个人规则库 Git 同步技能。触发：绑定 Gi
 
 ## 定位
 
-将本机 `{{CURSOR_HOME}}/plugins/local/puppet-vault/` 与个人 GitHub 仓库双向同步。
+将本机 `<vault_root>` 与个人 GitHub 仓库双向同步。`<vault_root>` 表示 puppet-vault 唯一正本目录；可由 `PUPPET_VAULT_ROOT` 显式指定，未指定时由脚本所在目录自动推导。
 
 | 方向 | 时机 |
 |------|------|
@@ -25,7 +25,7 @@ description: "puppet-vault 个人规则库 Git 同步技能。触发：绑定 Gi
 
 ### 1. 脚本路径
 
-`<skill_root>` = `{{CURSOR_HOME}}/plugins/local/puppet-vault/skills/puppet-vault-sync/`
+`<skill_root>` 表示当前技能自身运行态根目录。Cursor/Codex 均应通过入口链接到 `<vault_root>/skills/puppet-vault-sync/`，禁止把某个平台目录当作唯一正本。
 
 | 平台 | 命令 |
 |------|------|
@@ -55,6 +55,12 @@ description: "puppet-vault 个人规则库 Git 同步技能。触发：绑定 Gi
 
 - `puppet-self-evolve` 写入全局规则后，`sessionEnd` 会自动 commit + push
 - 晋升到公司仓库仍走 `sc-promote-to-repo`，**不经过** puppet-vault 远程
+
+### 5. 自管理入口
+
+- 不使用 CCSwitch 或其他第三方 Skill 管理器作为分发前提。
+- Cursor/Codex 入口由 `<vault_root>/scripts/install_agent_entries.py` 生成或修复。
+- 规则正文仍在 `<vault_root>/rules`，Skill 不承担 Rule 的唯一加载职责。
 
 ## Trigger Examples
 

@@ -60,7 +60,7 @@ description: "完整自进化执行技能。仅在两类场景使用：用户明
     project_context.md
 
 本机私有（不进仓库）
-  Cursor: {{CURSOR_HOME}}/plugins/local/puppet-vault/
+  <vault_root>/
     rules/*.mdc
     skills/*/SKILL.md
     hooks/**
@@ -99,7 +99,7 @@ sh "<skill_root>/scripts/check_init.sh"
 
 - Windows 默认使用 `check_init.cmd`，WSL/Linux/macOS 使用 `check_init.sh`，均优先解析 Python3。
 - 仅诊断/兜底时直调 `check_init.py`。
-- `<skill_root>` 表示当前技能自身运行态根目录。Cursor 为 `{{CURSOR_HOME}}/plugins/local/puppet-vault/skills/puppet-self-evolve`；Codex/Claude/Gemini 为 `{{AGENTS_HOME}}/skills/puppet-self-evolve`。
+- `<skill_root>` 表示当前技能自身运行态根目录。Cursor/Codex 可通过入口链接到 `<vault_root>/skills/puppet-self-evolve`，但唯一正本仍是 `<vault_root>`。
 - 若 `<skill_root>` 是符号链接目录，Linux/WSL/macOS 检查脚本时使用 `find -L` 或 `readlink`，不要用普通 `find` 误判脚本缺失。
 - 执行前必须把 `<skill_root>` 展开为当前技能自身的运行态根目录，禁止按当前工作区猜测脚本位置。
 
@@ -226,8 +226,8 @@ description: "<触发场景 + 主题摘要。须读全文获取执行流程。>"
 
 #### Hook / Script
 
-- 全局 Hook：Cursor 为 `{{CURSOR_HOME}}/plugins/local/puppet-vault/hooks/`；其他 Agent 为 `{{AGENTS_HOME}}/local_data/puppet-vault/hooks/`
-- 全局 Script：Cursor 为 `{{CURSOR_HOME}}/plugins/local/puppet-vault/scripts/`；其他 Agent 为 `{{AGENTS_HOME}}/local_data/puppet-vault/scripts/`
+- 全局 Hook：`<vault_root>/hooks/`
+- 全局 Script：`<vault_root>/scripts/`
 - 项目 Hook/Script：`<workspace>/.agents/hooks/` 或 `<workspace>/.agents/scripts/`
 
 ### Step E5：追加 EVOLUTION_LOG
