@@ -11,8 +11,8 @@ description: "完整自进化执行技能。仅在两类场景使用：用户明
 
 | 技能 | 职责 |
 |------|------|
-| `sc-inline-reflect` | 对话内轻量反思，写项目层并输出 `[SC_INLINE_REFLECT_DONE]`；有全局价值时按需调用 curator |
-| `puppet-vault-curator` | 候选池管家：查重、聚合、成熟度判断并输出 `[SC_CANDIDATE_DRAFTED]`；成熟后触发本技能 |
+| `puppet-inline-reflect` | 对话内轻量反思，写项目层并输出 `[PUPPET_INLINE_REFLECT_DONE]`；有全局价值时按需调用 curator |
+| `puppet-vault-curator` | 候选池管家：查重、聚合、成熟度判断并输出 `[PUPPET_CANDIDATE_DRAFTED]`；成熟后触发本技能 |
 | `puppet-self-evolve`（本技能） | 用户显式要求或 curator 成熟候选触发；AskQuestion 确认后写全局并输出 `[PUPPET_EVOLVED]` |
 | `sc-promote-to-repo` | 将成熟私有规则/技能晋升发布到通用仓库 |
 | `sc-memory-layered` | 用户偏好/事实层长期记忆 |
@@ -38,7 +38,7 @@ description: "完整自进化执行技能。仅在两类场景使用：用户明
 
 | 场景 | 处理组件 |
 |------|---------|
-| 对话中用户纠正 / 踩坑 / 成功路径 | `sc-inline-reflect` |
+| 对话中用户纠正 / 踩坑 / 成功路径 | `puppet-inline-reflect` |
 | 全局候选记录与触发次数更新 | `puppet-vault-curator` |
 | stop hook 会话结束 | `memory_stop_review.py` 只做标记兜底 |
 | 项目进度/交接总结 | `sc-context-reset` |
@@ -75,7 +75,7 @@ description: "完整自进化执行技能。仅在两类场景使用：用户明
 红线：
 
 1. 禁止将 `puppet-vault/` 目录整体放入 `publish_dir/plugins/`。
-2. 禁止将管理工具（`puppet-self-evolve`、`sc-promote-to-repo` 等）写入本机 `puppet-vault/skills/`。
+2. 禁止将公司发布仓库管理工具原样复制到 `puppet-vault/skills/`；Puppet 自管理技能必须去公司化并以 puppet 命名空间维护。
 3. 禁止把项目专属经验默认写入 `puppet-vault/`。
 4. 直接发布到 `publish_dir/plugins/**` 仅限用户显式要求，且必须做发布层清洗。
 

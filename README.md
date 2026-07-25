@@ -62,6 +62,9 @@
 |-----------|------|
 | `skills/puppet-rule-skill-decider` | 写入前判断 Rule / Skill / Hook / Script / 项目文档归属 |
 | `skills/puppet-skill-creator-guide` | Puppet 私有 Skill 创建、优化、质量六维与脚本自测 |
+| `skills/puppet-inline-reflect` | 对话内捕获项目级纠正、踩坑和成功路径 |
+| `skills/puppet-vault-curator` | 管理全局候选池、聚合触发次数与成熟度 |
+| `skills/puppet-self-evolve` | 用户确认后把成熟候选写入 puppet 全局层 |
 | `rules/puppet-rule-description-standard.mdc` | `.mdc` 的 description 触发词、主题摘要与正文分层标准 |
 
 来源：`constraints.md` + `Downloads/unity_rules.md` + `Downloads/cocos_rules.md`，已统一迁入 puppet-vault `references/`。
