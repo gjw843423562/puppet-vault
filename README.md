@@ -6,6 +6,7 @@
 - **三步走协作模式**：针对复杂任务强制执行“诊断-竞优-迭代”流程。
 - **私有规则库**：存放仅在本地生效的个人工程习惯规则。
 - **自定义技能**：方便后续将重复性操作固化为本地 Skill。
+- **规则/技能治理骨架**：新增能力先判定归属、再按质量六维与渐进披露落地，避免个人库膨胀失控。
 - **自管理分发**：不依赖 CCSwitch 或其它 Skill 管理器；Cursor/Codex 仅保留入口，规则和技能正文统一以本仓库为正本。
 
 ## 依赖
@@ -51,8 +52,17 @@
 | `rules/puppet-unity-dev-constraints.mdc` | Unity 参数中文化、编译自检、规范加载 |
 | `rules/puppet-cocos-dev-constraints.mdc` | Cocos 编译自检、规范加载 |
 | `rules/puppet-refactor-gate.mdc` | 重构前必须询问用户 |
+| `rules/puppet-rule-description-standard.mdc` | puppet-vault 规则 description 写作标准 |
 | `references/unity_rules.md` | Unity CoreRules + CodingStandards（含试玩/物理扩展） |
 | `references/cocos_rules.md` | Cocos CoreRules + CodingStandards（含交付登记扩展） |
+
+## 规则与技能治理入口
+
+| 技能/规则 | 职责 |
+|-----------|------|
+| `skills/puppet-rule-skill-decider` | 写入前判断 Rule / Skill / Hook / Script / 项目文档归属 |
+| `skills/puppet-skill-creator-guide` | Puppet 私有 Skill 创建、优化、质量六维与脚本自测 |
+| `rules/puppet-rule-description-standard.mdc` | `.mdc` 的 description 触发词、主题摘要与正文分层标准 |
 
 来源：`constraints.md` + `Downloads/unity_rules.md` + `Downloads/cocos_rules.md`，已统一迁入 puppet-vault `references/`。
 

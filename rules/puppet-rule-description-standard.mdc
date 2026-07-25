@@ -1,0 +1,43 @@
+---
+description: "创建、修改或审查 puppet-vault 规则文件（.mdc）时触发。须读全文获取 description 三要素、正文分层、alwaysApply 误区与自检标准。"
+alwaysApply: true
+---
+
+# Puppet 规则 Description 标准
+
+## 背景
+
+在多 Agent 运行态中，规则通常先通过 `description` 被发现，再按正文执行。`alwaysApply: true` 不能替代清晰的触发描述；如果 description 只有标题，AI 很容易漏读正文。
+
+## Description 三要素
+
+| 要素 | 写法 | 目的 |
+|------|------|------|
+| 触发场景 | `触发：创建/修改/审查 XXX 时` | 让 AI 知道何时读 |
+| 主题摘要 | `须读全文获取 A、B、C` | 说明正文覆盖范围 |
+| 路由关系 | `完整流程联动 puppet-xxx` | 避免 Rule 承载长流程 |
+
+## 写作规范
+
+1. `description` 负责召回，不负责承载完整正文。
+2. 详细门禁、路径模板、命令清单、长表格必须写入正文或 Skill。
+3. 简单规则只有一条约束时，可以在 `description` 直接写出该约束。
+4. 涉及 Puppet 私有库的规则，路径使用 `<vault_root>` 表示 puppet-vault 唯一正本目录。
+5. 修改任何 `.mdc` 前，先判断该内容应是 Rule、Skill、Hook、Script 还是项目文档；不确定时走 `puppet-rule-skill-decider`。
+
+## 反模式
+
+| 反模式 | 问题 |
+|--------|------|
+| 只有标题，如“开发约束规则” | 缺触发词，容易不生效 |
+| 把正文编号整段搬进 description | description 膨胀，维护困难 |
+| 把某台机器绝对路径写成唯一入口 | 破坏跨 Agent 运行态 |
+| 在 Rule 中堆完整 SOP | 应下沉到 Skill |
+
+## 自检清单
+
+- 是否有明确触发场景？
+- 是否说明须读全文获取哪些主题？
+- 去掉 `alwaysApply` 后，AI 是否仍能知道何时加载？
+- 是否把长流程放进了 Skill，而不是 Rule？
+- 是否避免了项目路径、一次性日志、业务私货进入全局规则？
