@@ -65,7 +65,11 @@
 | `skills/puppet-inline-reflect` | 对话内捕获项目级纠正、踩坑和成功路径 |
 | `skills/puppet-vault-curator` | 管理全局候选池、聚合触发次数与成熟度 |
 | `skills/puppet-self-evolve` | 用户确认后把成熟候选写入 puppet 全局层 |
+| `skills/puppet-engineering-efficiency` | Windows/Git/Python 工程提效底座与验证清单 |
 | `rules/puppet-rule-description-standard.mdc` | `.mdc` 的 description 触发词、主题摘要与正文分层标准 |
+| `rules/puppet-windows-shell-safety.mdc` | Windows Shell、编码、递归删除与轻入口重 Python 红线 |
+| `rules/puppet-git-sync-safety.mdc` | Git 同步、用户脏改动隔离与 UTF-8 提交门禁 |
+| `rules/puppet-python-tooling-standard.mdc` | Python 3.8 兼容、入口成对与脚本自测 |
 
 来源：`constraints.md` + `Downloads/unity_rules.md` + `Downloads/cocos_rules.md`，已统一迁入 puppet-vault `references/`。
 

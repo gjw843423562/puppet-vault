@@ -1,0 +1,55 @@
+---
+description: "Puppet Python 工具脚本规范。触发：新增/修改 skills/**/scripts/*.py、.cmd/.sh 入口、同步/候选池/校验脚本，或遇到 Python2/3 冲突、ModuleNotFoundError 时。须读全文获取 Python3 解析、3.8 兼容、入口成对、--help 自测与依赖安装规则。"
+alwaysApply: false
+---
+
+# Puppet Python 工具脚本规范
+
+## 解释器
+
+1. 优先使用 `python3`。
+2. 若 `python` 指向 Python 2，不得继续用裸 `python` 执行脚本。
+3. 需要探测时按顺序尝试：`python3` → `py -3` → `python`，并用 `sys.version_info[0]` 硬校验。
+
+## 兼容性
+
+本机 puppet 工具脚本默认兼容 Python 3.8：
+
+- 避免 `X | Y` 类型联合。
+- 避免 `list[str]`、`dict[str, Any]` 等 Python 3.9+ 写法。
+- 使用 `typing.List`、`typing.Dict`、`typing.Optional`。
+
+## 入口成对
+
+有 CLI 脚本时：
+
+| 平台 | 入口 |
+|------|------|
+| Windows | `scripts/<name>.cmd` |
+| WSL/Linux/macOS | `scripts/<name>.sh` |
+
+入口只负责定位目录、解析 Python 3、调用 `.py`、透传参数与退出码；业务逻辑不得写在 CMD/SH 中。
+
+## 自测门禁
+
+提交前必须执行：
+
+```cmd
+python3 <script.py> --help
+<script.cmd> --help
+```
+
+若仓库提供烟测，也必须执行并零退出。未自测不得宣称已验证。
+
+## 依赖规则
+
+- 禁止裸 `pip install`。
+- 使用 `<python3> -m pip install <package>`。
+- 安装后必须重跑原脚本验证。
+- 若缺依赖不是当前任务必需，不主动安装，先向用户说明。
+
+## 输出与编码
+
+- Python 脚本读写文本默认 `encoding="utf-8"`。
+- JSON 输出使用 `ensure_ascii=False`。
+- 命令行输出应便于机器读取，优先 JSON 或稳定前缀。

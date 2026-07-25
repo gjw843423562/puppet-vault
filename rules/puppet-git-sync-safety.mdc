@@ -1,0 +1,53 @@
+---
+description: "Puppet Git 同步安全规则。触发：同步 puppet-vault、自动 pull/push/commit、脚本化 Git 操作、强推/历史改写、或工作区已有脏改动时。须读全文获取目标仓库确认、脏改动隔离、显式暂存、UTF-8 提交与 push 门禁。"
+alwaysApply: false
+---
+
+# Puppet Git 同步安全规则
+
+## 目标确认
+
+执行 Git 写操作前，必须确认：
+
+1. 当前目录是预期仓库。
+2. 当前分支是预期分支。
+3. remote URL 与同步目标一致。
+
+对 puppet-vault，默认目标为 `<vault_root>` 的 `main` 分支。
+
+## 脏改动隔离
+
+若工作区存在用户已有改动或未跟踪文件：
+
+1. 不得使用会隐式 `git add -A` 的流程提交所有文件。
+2. 必须只暂存本阶段明确产物。
+3. 若同步脚本会吞入无关改动，改用显式暂存 + UTF-8 提交 + push；并向用户说明原因。
+4. 不得回滚、覆盖或移动用户已有脏改动。
+
+## 自动 pull / push 门禁
+
+- pull 前若本地有未提交改动，默认跳过，除非用户明确授权 force。
+- push 前必须确认本地提交消息 UTF-8 正常。
+- 自动化 Git 操作必须遇错即停，不得带病继续 push。
+- 强推、历史改写、filter-repo、filter-branch 必须单独询问并说明协作影响。
+
+## Windows 提交
+
+Windows 下中文提交必须走 UTF-8 安全流程：
+
+1. 优先使用 `sc-git-commit` 或等价 UTF-8 提交入口。
+2. 若直接消息参数异常，回退到 UTF-8 消息文件。
+3. 提交后校验 `git log -1 --pretty=%B`，乱码视为真实错误。
+
+## Puppet 同步建议
+
+- 无用户脏改动时，可使用 `puppet-vault-sync` 的 `commit` / `push`。
+- 有用户脏改动时，显式 stage 本阶段文件，再提交推送。
+- `memory/`、临时文件、候选池运行态数据不进入 Git。
+
+## 自检清单
+
+- 是否避开无关 `.gitignore`、`project_context.md` 等用户改动？
+- 是否只提交本阶段文件？
+- 是否完成 push 并看到远端更新？
+- 是否没有使用 `--force` / `--hard` 默认恢复？
